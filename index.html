@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMIT Instagram Stories Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .story-item {
+            margin: 15px 0;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        .story-item button {
+            padding: 8px 15px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .story-item button:hover {
+            background: #0056b3;
+        }
+    </style>
+    <script>
+        async function fetchStories() {
+            const sheetURL = "https://script.google.com/macros/s/AKfycbyUsROUPk_evB-v_Ios60DfUDtktYRhgOrj08YJcPVQPVRl0-5MSUgUMGqd2rPJv1yZ/exec";
+            try {
+                const response = await fetch(sheetURL);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const data = await response.json();
+                const container = document.getElementById("stories");
+                container.innerHTML = "";
+                if (data.length === 0) {
+                    container.innerHTML = "<p>No stories available.</p>";
+                } else {
+                    data.forEach(story => {
+                        const div = document.createElement("div");
+                        div.classList.add("story-item");
+                        div.innerHTML = `<h3>${story.date} - ${story.event}</h3>
+                                         <p>${story.theme}</p>
+                                         <button onclick="window.open('${story.sheet_link}', '_blank')">View Content</button>`;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                document.getElementById("stories").innerHTML = `<p>Error loading stories. Please try again later.</p>`;
+                console.error("Fetch error:", error);
+            }
+        }
+        window.onload = fetchStories;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>SAMIT Instagram Stories Calendar</h2>
+        <div id="stories">Loading...</div>
+    </div>
+</body>
+</html>
